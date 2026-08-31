@@ -226,8 +226,7 @@ async function registrarActividad(event) {
     try {
 
         const respuesta =
-            await fetch(
-                "/api/actividades",
+            await fetch("https://proyecto-actividades.onrender.com/api/actividades",
                 {
                     method: "POST",
 
@@ -287,7 +286,7 @@ async function cargarClasificaciones() {
     try {
 
         const respuesta =
-            await fetch("/api/clasificaciones");
+            await fetch("https://proyecto-actividades.onrender.com/api/clasificaciones");
 
         if (!respuesta.ok) {
 
@@ -337,7 +336,7 @@ async function cargarTipos() {
     try {
 
         const respuesta =
-            await fetch("/api/tipos");
+            await fetch("https://proyecto-actividades.onrender.com/api/tipos");
 
         if (!respuesta.ok) {
 
