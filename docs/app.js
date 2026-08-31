@@ -1,5 +1,4 @@
-const API = "";
-
+const API = "https://proyecto-actividades.onrender.com";
 
 // =====================================
 // CONSULTAR ACTIVIDADES
