@@ -133,78 +133,107 @@ app.get(
     "/api/actividades",
     (req, res) => {
 
-        const {
-            fecha,
-            hora
-        } = req.query;
+const { 
+    fecha, 
+    hora,
+    clasificacion
+} = req.query;
 
-        let sql = `
-            SELECT
-                a.id_actividad,
-                a.fecha,
-                a.hora,
-                a.actividad,
-                a.duracion,
-                c.nombre AS clasificacion,
-                t.nombre AS tipo
-            FROM actividad a
+let sql = `
+    SELECT 
+        a.id_actividad, 
+        a.fecha, 
+        a.hora, 
+        a.actividad, 
+        a.duracion, 
+        c.nombre AS clasificacion, 
+        t.nombre AS tipo 
+    FROM actividad a 
 
-            INNER JOIN clasificacion c
-                ON a.id_clasificacion =
-                   c.id_clasificacion
+    INNER JOIN clasificacion c 
+        ON a.id_clasificacion = 
+           c.id_clasificacion 
 
-            LEFT JOIN tipo t
-                ON a.id_tipo =
-                   t.id_tipo
-        `;
+    LEFT JOIN tipo t 
+        ON a.id_tipo = 
+           t.id_tipo 
+`;
 
-        const parametros = [];
+const parametros = [];
 
-        // Buscar por fecha
-        if (fecha) {
+const condiciones = [];
 
-            sql += `
-                WHERE a.fecha = ?
-            `;
 
-            parametros.push(fecha);
-        }
+// Buscar por fecha
+if (fecha) {
 
-       // Buscar por fecha y hora
-if (fecha && hora) {
+    condiciones.push(
+        "a.fecha = ?"
+    );
 
-    sql += `
-        AND substr(a.hora, 1, 5) = ?
-    `;
+    parametros.push(fecha);
+}
+
+
+// Buscar por hora
+if (hora) {
+
+    condiciones.push(
+        "substr(a.hora, 1, 5) = ?"
+    );
 
     parametros.push(
         hora.substring(0, 5)
     );
 }
 
-        sql += `
-            ORDER BY
-                a.fecha,
-                a.hora
-        `;
 
-        db.all(
-            sql,
-            parametros,
-            (error, filas) => {
+// Buscar por clasificación
+if (clasificacion) {
 
-                if (error) {
-                    return res.status(500).json({
-                        error: error.message
-                    });
-                }
+    condiciones.push(
+        "a.id_clasificacion = ?"
+    );
 
-                res.json(filas);
-            }
-        );
+    parametros.push(
+        clasificacion
+    );
+}
+
+
+// Agregar condiciones
+if (condiciones.length > 0) {
+
+    sql += `
+        WHERE ${condiciones.join(" AND ")}
+    `;
+}
+
+
+sql += `
+    ORDER BY 
+        a.fecha, 
+        a.hora 
+`;
+
+db.all(
+    sql,
+    parametros,
+    (error, filas) => {
+
+        if (error) {
+
+            return res.status(500).json({
+                error: error.message
+            });
+
+        }
+
+        res.json(filas);
     }
 );
-
+}
+);
 
 // -----------------------------------------
 // REGISTRAR UNA NUEVA ACTIVIDAD
