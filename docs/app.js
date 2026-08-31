@@ -11,19 +11,40 @@ async function consultarActividades() {
 
     const hora =
         document.getElementById("horaConsulta").value;
+        
+        const clasificacion =
+    document.getElementById("clasificacionConsulta").value;
 
+   let url =
+    `${API}/api/actividades?`;
 
-    if (!fecha) {
+const parametros = [];
 
-        alert("Selecciona una fecha.");
+if (fecha) {
 
-        return;
-    }
+    parametros.push(
+        `fecha=${encodeURIComponent(fecha)}`
+    );
 
+}
 
-    let url =
-        `${API}/api/actividades?fecha=${fecha}`;
+if (hora) {
 
+    parametros.push(
+        `hora=${encodeURIComponent(hora)}`
+    );
+
+}
+
+if (clasificacion) {
+
+    parametros.push(
+        `clasificacion=${encodeURIComponent(clasificacion)}`
+    );
+
+}
+
+url += parametros.join("&");
 
     // IMPORTANTE:
     // El HTML entrega HH:MM.
@@ -275,8 +296,7 @@ async function registrarActividad(event) {
             `Error: ${error.message}`
         );
     }
-}
-// =====================================
+}// =====================================
 // CARGAR CLASIFICACIONES
 // =====================================
 
@@ -297,23 +317,51 @@ async function cargarClasificaciones() {
         const datos =
             await respuesta.json();
 
-        const select =
+
+        // Selector para REGISTRAR actividad
+        const selectRegistro =
             document.getElementById(
                 "id_clasificacion"
             );
 
+
+        // Selector para CONSULTAR actividades
+        const selectConsulta =
+            document.getElementById(
+                "clasificacionConsulta"
+            );
+
+
         datos.forEach(item => {
 
-            const opcion =
+            // Opción para REGISTRAR
+            const opcionRegistro =
                 document.createElement("option");
 
-            opcion.value =
+            opcionRegistro.value =
                 item.id_clasificacion;
 
-            opcion.textContent =
+            opcionRegistro.textContent =
                 item.nombre;
 
-            select.appendChild(opcion);
+            selectRegistro.appendChild(
+                opcionRegistro
+            );
+
+
+            // Opción para CONSULTAR
+            const opcionConsulta =
+                document.createElement("option");
+
+            opcionConsulta.value =
+                item.id_clasificacion;
+
+            opcionConsulta.textContent =
+                item.nombre;
+
+            selectConsulta.appendChild(
+                opcionConsulta
+            );
 
         });
 
@@ -323,8 +371,6 @@ async function cargarClasificaciones() {
 
     }
 }
-
-
 
 // =====================================
 // CARGAR TIPOS
